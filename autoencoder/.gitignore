@@ -1,0 +1,8 @@
+test.py
+mnist
+*.pyc
+__pycache__
+logs
+cifar10
+*.png
+*.jpg

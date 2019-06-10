@@ -1,0 +1,66 @@
+{
+    "hyperparams" : {
+        "original-sd":
+	        {
+	            "state_description": true,
+	            "g_layers": [512,512,512,512],
+                "question_injection_position": 0,
+	            
+	            "f_fc1": 512,
+	            "f_fc2": 1024,
+	            
+	            "dropout": 0.05,
+	            "lstm_hidden": 256,
+	            "lstm_word_emb": 32,
+                "rl_in_size": 14,
+                "version": "rn"
+	        },
+        "original-small-sd":
+	        {
+	            "state_description": true,
+	            "g_layers": [512,512,512,32],
+                "question_injection_position": 0,
+	            
+	            "f_fc1": 512,
+	            "f_fc2": 1024,
+	            
+	            "dropout": 0.05,
+	            "lstm_hidden": 256,
+	            "lstm_word_emb": 32,
+                "rl_in_size": 14,
+                "version": "rn"
+	        },
+        "fsort-sd":
+	        {
+	            "state_description": true,
+	            "g_layers": [512,512,512,512],
+                "question_injection_position": 0,
+	            
+	            "f_fc1": 512,
+	            "f_fc2": 1024,
+	            
+	            "dropout": 0.05,
+	            "lstm_hidden": 256,
+	            "lstm_word_emb": 32,
+                "rl_in_size": 7,
+                "fsort_pieces": 20,
+                "version": "fsort"
+	        },
+        "fsort-small-sd":
+	        {
+	            "state_description": true,
+	            "g_layers": [512,512,512,32],
+                "question_injection_position": 0,
+	            
+	            "f_fc1": 512,
+	            "f_fc2": 1024,
+	            
+	            "dropout": 0.05,
+	            "lstm_hidden": 256,
+	            "lstm_word_emb": 32,
+                "rl_in_size": 7,
+                "fsort_pieces": 20,
+                "version": "fsort"
+	        }
+    }
+}
