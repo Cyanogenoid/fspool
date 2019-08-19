@@ -169,6 +169,18 @@ class RelationalLayer(RelationalLayerBase):
         if self.version == 'rn':
             x_g = x_.view(b, d**2, self.g_layers_size[-1])
             x_g = x_g.sum(1).squeeze(1)
+        elif self.version == 'max':
+            x_g = x_.view(b, d, self.g_layers_size[-1])
+            x_g = x_g.max(dim=1)[0]
+            # need to multiply by 12 to have same scale as original model
+            x_g = x_g * 12
+        elif self.version == 'mean':
+            x_g = x_.view(b, d, self.g_layers_size[-1])
+            # find padding by looking for feature vectors with 0 in all channels
+            n_objects = (x_full.transpose(1, 2).abs().sum(1) != 0).sum(1).detach().float()
+            x_g = x_g.sum(dim=1) / n_objects.unsqueeze(dim=1)
+            # need to multiply by 12 to have same scale as original model
+            x_g = x_g * 12
         else:
             x_g = x_.view(b, d, self.g_layers_size[-1])
             x_g = x_g.transpose(1, 2)
