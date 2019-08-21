@@ -14,9 +14,9 @@ NUM=$1
 PARAMS="--mnist --classify --dim $DIM --latent $LATENT --batch-size $BS --epochs $EPOCHS --noise $NOISE --lr $LR"
 
 # fspool + frozen encoder weights
-python train.py $PARAMS --resume logs/mnist-fs-$NOISE-$NUM --name mnistc-fs-freeze-$NUM --freeze-encoder --encoder FSEncoder --decoder FSDecoder
+python train.py $PARAMS --resume logs/mnist-fs-0.05-$NUM --name mnistc-fs-freeze-$NUM --freeze-encoder --encoder FSEncoder --decoder FSDecoder
 # fspool + unfrozen encoder weights (finetune)
-python train.py $PARAMS --resume logs/mnist-fs-$NOISE-$NUM --name mnistc-fs-nofreeze-$NUM --encoder FSEncoder --decoder FSDecoder
+python train.py $PARAMS --resume logs/mnist-fs-0.05-$NUM --name mnistc-fs-nofreeze-$NUM --encoder FSEncoder --decoder FSDecoder
 # fspool from random init
 python train.py $PARAMS --name mnistc-fs-rinit-$NUM --encoder FSEncoder --decoder FSDecoder
 
