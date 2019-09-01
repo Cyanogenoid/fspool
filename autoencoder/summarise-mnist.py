@@ -13,7 +13,8 @@ for path in os.listdir('logs'):
 
     log = torch.load(f'logs/{path}')
     test_acc = log['tracker']['test_acc']
-    last_epoch = test_acc[0]
+    last_epoch = test_acc[-1]
+#    last_epoch = test_acc[0]  # uncomment this line to show first epoch instead of last epoch results
     acc = np.mean(last_epoch)
 
     data.append((model, cat, num, acc))
