@@ -188,8 +188,7 @@ class RelationalLayer(RelationalLayerBase):
             # x_g has shape (batch, length, channels)
             x_g = x_g.transpose(0, 1)
             # x_g has shape (length, batch, channels)
-            initial_state = torch.zeros(1, x_g.size(0), x_g.size(1), device=x_g.device)
-            _, (_, cell) = self.lstm(x_g, initial_state)
+            _, (_, cell) = self.lstm(x_g)
             # c has shape (1, batch, channels)
             x_g = cell.squeeze(0)
         else:
