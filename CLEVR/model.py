@@ -106,6 +106,7 @@ class RelationalLayer(RelationalLayerBase):
         self.g_layers = nn.ModuleList(self.g_layers)
         self.extraction = extraction
         self.pool = fspool.FSPool(self.g_layers_size[-1], self.fspool_pieces)
+        self.lstm = nn.LSTM(self.g_layers_size[-1], self.g_layers_size[-1])
     
     def forward(self, x, qst):
         # x = (B x 8*8 x 24)
@@ -181,6 +182,16 @@ class RelationalLayer(RelationalLayerBase):
             x_g = x_g.sum(dim=1) / n_objects.unsqueeze(dim=1)
             # need to multiply by 12 to have same scale as original model
             x_g = x_g * 12
+        elif self.version == 'janossy':
+            x_g = x_.view(b, d, self.g_layers_size[-1])
+            # dataloader already shuffles set, so can just use as is
+            # x_g has shape (batch, length, channels)
+            x_g = x_g.transpose(0, 1)
+            # x_g has shape (length, batch, channels)
+            initial_state = torch.zeros(1, x_g.size(0), x_g.size(1), device=x_g.device)
+            _, (_, cell) = self.lstm(x_g, initial_state)
+            # c has shape (1, batch, channels)
+            x_g = cell.squeeze(0)
         else:
             x_g = x_.view(b, d, self.g_layers_size[-1])
             x_g = x_g.transpose(1, 2)
