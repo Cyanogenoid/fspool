@@ -5,7 +5,7 @@ LATENT=16
 DIM=32
 LR=0.001
 BS=8
-EPOCHS=10
+EPOCHS=100
 # When classifying MNIST sets without noise, the FSEncoder approach with pre-trained weights does better with a pre-trained model on noisy digits
 # Thus, if you set NOISE=0.00, it's worth it to still resume from logs/mnist-fs-0.05-$NUM
 NOISE=0.05
