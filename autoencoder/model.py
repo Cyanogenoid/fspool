@@ -8,9 +8,9 @@ from fspool import FSPool, cont_sort
 
 
 class SAE(nn.Module):
-    def __init__(self, encoder, decoder, latent_dim, latent_dim_encoder=None, encoder_args={}, decoder_args={}, classify=False):
+    def __init__(self, encoder, decoder, latent_dim, latent_dim_encoder=None, encoder_args={}, decoder_args={}, classify=False, input_channels=2):
         super().__init__()
-        channels = 2
+        channels = input_channels
         latent_dim_encoder = latent_dim_encoder or latent_dim
         self.encoder = encoder(input_channels=channels, output_channels=latent_dim_encoder, **encoder_args)
         self.decoder = decoder(input_channels=latent_dim, output_channels=channels, **decoder_args)
