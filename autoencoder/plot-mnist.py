@@ -78,8 +78,8 @@ def main():
     }
     net_class = SAE
     net = [net_class(
-        encoder=globals()[args.encoder if k == 1 else 'SumEncoder'],
-        decoder=globals()[args.decoder if k == 1 else 'MLPDecoder'],
+        encoder=globals()[args.encoder if k == 0 else 'SumEncoder'],
+        decoder=globals()[args.decoder if k == 0 else 'MLPDecoder'],
         latent_dim=args.latent,
         encoder_args=model_args,
         decoder_args=model_args,
@@ -123,7 +123,7 @@ def main():
             # pad to fixed size
             padding = torch.zeros(points.size(0), points.size(1), args.cardinality - points.size(2)).to(points.device)
             padded_points = torch.cat([input_points, padding], dim=2)
-            points2 = [padded_points, input_points]
+            points2 = [input_points, padded_points]
 
             pred = [points, input_points] + [n(p, n_points) for n, p in zip(net, points2)]
             pred = [p[0].detach().cpu().numpy() for p in pred]
@@ -155,13 +155,16 @@ def main():
     plt.figure(figsize=(16, 3.9))
     for i, (noise, ms) in enumerate(d.items()):
         print(i, noise, ms)
-        [n.load_state_dict(torch.load(path)['weights'], strict=True) for (_, path), n in zip(ms, net)]
+        for (_, path), n in zip(ms, net):
+            weights = torch.load(path)['weights']
+            print(path, type(n.encoder), type(n.decoder))
+            n.load_state_dict(weights, strict=True)
         args.noise = noise
 
         points, n_points = run(net, test_loader, None)
 
         for j, (po, np) in enumerate(zip(points, n_points)):
-            for p, row in zip(po, [0, 0, 2, 1]):
+            for p, row in zip(po, [0, 0, 1, 2]):
                 ax = plt.subplot(3, 12, 12*row+1+2*i+j)
                 if row == 2:
                     np = 342
