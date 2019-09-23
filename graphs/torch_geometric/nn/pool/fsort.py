@@ -64,7 +64,6 @@ class FSPool(nn.Module):
             x, _ = cont_sort(x, perm)
         else:
             x = x.scatter(2, perm, x)
-        # TODO check whether mask is needed here
         return x
 
     def determine_weight(self, sizes):

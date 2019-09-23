@@ -24,7 +24,7 @@ elif args.type == 'social':
 models = ['fsort', 'sum' if args.type == 'bio' else 'mean']
 batch_size = [128 if args.type == 'bio' else 100, 32]
 seed = [args.seed]
-dropout = [0]#[0] + ([0.5] if args.type == 'bio' else [])
+dropout = [0] + ([0.5] if args.type == 'bio' else [])
 fold = range(10)
 epochs = 500 if args.type == 'bio' else 250
 

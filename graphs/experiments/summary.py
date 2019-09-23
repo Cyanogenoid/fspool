@@ -54,18 +54,20 @@ for path in sorted(args.paths, key=lambda x: x.split('-')[::-1]):
     else:
         run = parts[-2]
         model = parts[-1]
+    if model == 'mean':
+        model = 'sum'
     for i, (val_acc, test_acc) in enumerate(acc):
         data['seed'].append(seed)
         data['run'].append(run)
         data['model'].append(model)
         data['dataset'].append(dataset)
         data['fold'].append(fold)
-        data['dim'].append(dim)
-        data['bs'].append(bs)
-        data['dropout'].append(dropout)
-        data['epoch'].append(i)
-        data['val_acc'].append(val_acc)
-        data['test_acc'].append(test_acc)
+        data['dim'].append(int(dim))
+        data['bs'].append(int(bs))
+        data['dropout'].append(float(dropout))
+        data['epoch'].append(int(i))
+        data['val_acc'].append(val_acc * 100)
+        data['test_acc'].append(test_acc * 100)
 
 
 data = pd.DataFrame.from_dict(data)
@@ -94,8 +96,25 @@ elif not args.merge:
 idx = df2.idxmax()
 best = df.loc[idx]
 print(best.to_string())
+best = best.reset_index(level=['epoch', 'bs', 'dim', 'dropout'])
 df3 = best.groupby(['run', 'model', 'dataset'])
 mean = df3.mean()
-std = df3.std().rename(index=str, columns={'test_acc': 'test_std', 'val_acc': 'val_std'})
+std = df3[['test_acc', 'val_acc', 'epoch']].std().rename(index=str, columns={'test_acc': 'test_std', 'val_acc': 'val_std', 'epoch': 'epoch_std'})
 best_across_seeds = pd.concat([mean, std], axis=1)
 print(best_across_seeds)
+print(best_across_seeds[['test_acc', 'test_std', 'epoch']])
+b = best_across_seeds
+se = b['test_std'] / np.sqrt(10)
+
+pivoted_mean = b.reset_index().pivot(index='model', columns='dataset', values='test_acc')
+pivoted_std = b.reset_index().pivot(index='model', columns='dataset', values='test_std')
+pivoted_epoch = b.reset_index().pivot(index='model', columns='dataset', values='epoch')
+pivoted_epoch_std = b.reset_index().pivot(index='model', columns='dataset', values='epoch_std')
+print('### EPOCH')
+print(pivoted_epoch)
+print(pivoted_epoch_std)
+print('### STD')
+print(pivoted_std.round(1))
+print('### MEAN')
+print(pivoted_mean.round(1).to_latex())
+print(pivoted_mean.round(1))
