@@ -4,6 +4,7 @@
 
 This is the official implementation of our paper [FSPool: Learning Set Representations with Featurewise Sort Pooling][0] in PyTorch.
 We propose a pooling method for sets of feature vectors that allows deep neural networks to learn better set representations, classification results and convergence speed.
+You can take a look at the [poster for the NeurIPS 2019 Workshop on Sets & Partitions][2].
 
 We also analyse why existing set auto-encoders struggle to auto-encode some very simple sets and attribute this to a responsibility problem.
 FSPool can be used to construct a permutation-equivariant auto-encoder, which avoids this problem and results in much better reconstructions and representations.
@@ -26,3 +27,4 @@ Please refer to the READMEs in the `auto-encoder` and `clevr` directories for in
 
 [0]: https://arxiv.com/abs/1906.02795
 [1]: https://github.com/Cyanogenoid/fspool/blob/master/fspool.py
+[2]: https://www.cyanogenoid.com/files/fspool-workshop-poster.pdf
