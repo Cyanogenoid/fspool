@@ -1,3 +1,6 @@
+The following README is from the Deep Set Prediction Networks paper.
+The code was changed to run the baseline experimemts of Sum and Max pooling, for which you use the same commands as described in the README in the dspn directory.
+
 # Deep Set Prediction Networks
 
 ![Overview of set optimisation on the example of CLEVR bounding box prediction](overview.png)
