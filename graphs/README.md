@@ -1,3 +1,7 @@
+The following readme is from an old version of the Pytorch Geometric library, which we used to implement the graph models.
+The experiments from the paper are located in the experiments directory.
+Make sure to pip install this version of Pytorch Geometric with the correct dependencies first.
+
 [pypi-image]: https://badge.fury.io/py/torch-geometric.svg
 [pypi-url]: https://pypi.python.org/pypi/torch-geometric
 [build-image]: https://travis-ci.org/rusty1s/pytorch_geometric.svg?branch=master
