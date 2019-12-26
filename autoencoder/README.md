@@ -28,11 +28,11 @@ The encoder uses FSPool (and FSUnpool with auto-encoders) defined in `fspool.py`
 
 
 ## Requirements
-Python 3
-PyTorch 1.0+
-torchvision
-numpy
-scipy
-pandas
-matplotlib
-tqdm
+- Python 3
+- PyTorch 1.0+
+- torchvision
+- numpy
+- scipy
+- pandas
+- matplotlib
+- tqdm
