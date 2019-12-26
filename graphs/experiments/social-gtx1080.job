@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#SBATCH -p gtx1080
+#SBATCH --gres=gpu:4
+#SBATCH --time=48:00:00
+#SBATCH --ntasks-per-node=48
+
+SEED=$1
+
+module load conda/py3-latest 
+module load cuda/9.0
+source activate py3venv
+source activate geometric
+
+python schedule.py --seed $SEED --type social

@@ -50,6 +50,7 @@ def main():
     parser.add_argument('--samples', type=int, default=2**14, help='Dataset size')
     parser.add_argument('--skip', action='store_true', help='Skip permutation use in decoder')
     parser.add_argument('--mnist', action='store_true', help='Use MNIST dataset')
+    parser.add_argument('--masked', action='store_true', help='Use masked version of MNIST dataset')
     parser.add_argument('--no-cuda', action='store_true', help='Run on CPU instead of GPU (not recommended)')
     parser.add_argument('--train-only', action='store_true', help='Only run training, no evaluation')
     parser.add_argument('--eval-only', action='store_true', help='Only run evaluation, no training')
@@ -85,6 +86,7 @@ def main():
         encoder_args=model_args,
         decoder_args=model_args,
         classify=args.classify,
+        input_channels=3 if args.mnist and args.masked else 2,
     )
 
     if not args.no_cuda:
@@ -106,8 +108,12 @@ def main():
         dataset_train = data.Polygons(size=args.samples, **dataset_settings)
         dataset_test = data.Polygons(size=2**14, **dataset_settings)
     else:
-        dataset_train = data.MNISTSet(train=True)
-        dataset_test = data.MNISTSet(train=False)
+        if not args.masked:
+            dataset_train = data.MNISTSet(train=True)
+            dataset_test = data.MNISTSet(train=False)
+        else:
+            dataset_train = data.MNISTSetMasked(train=True)
+            dataset_test = data.MNISTSetMasked(train=False)
 
     train_loader = data.get_loader(dataset_train, batch_size=args.batch_size, num_workers=args.num_workers)
     test_loader = data.get_loader(dataset_test, batch_size=args.batch_size, num_workers=args.num_workers)

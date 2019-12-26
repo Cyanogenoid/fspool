@@ -11,7 +11,15 @@ NUM=$1
 
 for noise in $NOISE; do
     echo fspool $noise
-    python train.py --mnist --dim $DIM --latent $LATENT --batch-size $BS --train-only --loss direct --epochs $EPOCHS --name mnist-direct-$noise-$NUM --noise $noise --lr $LR
-    echo baseline $noise
-    python train.py --mnist --dim $DIM --latent $LATENT --batch-size $BS --train-only --loss chamfer --epochs $EPOCHS --name mnist-chamfer-$noise-$NUM --noise $noise --lr $LR --encoder SumEncoder --decoder MLPDecoder
+    python train.py --mnist --dim $DIM --latent $LATENT --batch-size $BS --train-only --loss direct --epochs $EPOCHS --name mnist-fs-$noise-$NUM --noise $noise --lr $LR
+
+    echo baseline sum $noise
+    python train.py --mnist --dim $DIM --latent $LATENT --batch-size $BS --train-only --loss chamfer --epochs $EPOCHS --name mnist-sum-$noise-$NUM --noise $noise --lr $LR --encoder SumEncoder --decoder MLPDecoder
+    echo baseline max $noise
+    python train.py --mnist --dim $DIM --latent $LATENT --batch-size $BS --train-only --loss chamfer --epochs $EPOCHS --name mnist-max-$noise-$NUM --noise $noise --lr $LR --encoder MaxEncoder --decoder MLPDecoder
+    echo baseline max $noise
+    python train.py --mnist --dim $DIM --latent $LATENT --batch-size $BS --train-only --loss chamfer --epochs $EPOCHS --name mnist-mean-$noise-$NUM --noise $noise --lr $LR --encoder MaxEncoder --decoder MLPDecoder
+
+    echo baseline sum + rnn decoder $noise
+    python train.py --mnist --dim $DIM --latent $LATENT --batch-size $BS --train-only --loss chamfer --epochs $EPOCHS --name mnist-sum-rnn-$noise-$NUM --noise $noise --lr $LR --encoder SumEncoder --decoder RNNDecoder
 done

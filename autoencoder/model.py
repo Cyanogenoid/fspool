@@ -8,9 +8,9 @@ from fspool import FSPool, cont_sort
 
 
 class SAE(nn.Module):
-    def __init__(self, encoder, decoder, latent_dim, latent_dim_encoder=None, encoder_args={}, decoder_args={}, classify=False):
+    def __init__(self, encoder, decoder, latent_dim, latent_dim_encoder=None, encoder_args={}, decoder_args={}, classify=False, input_channels=2):
         super().__init__()
-        channels = 2
+        channels = input_channels
         latent_dim_encoder = latent_dim_encoder or latent_dim
         self.encoder = encoder(input_channels=channels, output_channels=latent_dim_encoder, **encoder_args)
         self.decoder = decoder(input_channels=latent_dim, output_channels=channels, **decoder_args)
@@ -121,6 +121,48 @@ class SumEncoder(nn.Module):
         return x
 
 
+class MaxEncoder(nn.Module):
+    def __init__(self, *, input_channels, output_channels, dim, **kwargs):
+        super().__init__()
+        self.conv = nn.Sequential(
+            nn.Conv1d(input_channels, dim, 1),
+            nn.ReLU(inplace=True),
+            nn.Conv1d(dim, dim, 1),
+        )
+        self.lin = nn.Sequential(
+            nn.Linear(dim, dim, 1),
+            nn.ReLU(inplace=True),
+            nn.Linear(dim, output_channels, 1),
+        )
+
+    def forward(self, x, n_points, *args):
+        x = self.conv(x)
+        x = x.max(2)[0]
+        x = self.lin(x)
+        return x
+
+
+class MeanEncoder(nn.Module):
+    def __init__(self, *, input_channels, output_channels, dim, **kwargs):
+        super().__init__()
+        self.conv = nn.Sequential(
+            nn.Conv1d(input_channels, dim, 1),
+            nn.ReLU(inplace=True),
+            nn.Conv1d(dim, dim, 1),
+        )
+        self.lin = nn.Sequential(
+            nn.Linear(dim, dim, 1),
+            nn.ReLU(inplace=True),
+            nn.Linear(dim, output_channels, 1),
+        )
+
+    def forward(self, x, n_points, *args):
+        x = self.conv(x)
+        x = x.sum(2) / n_points.unsqueeze(1).float()
+        x = self.lin(x)
+        return x
+
+
 ############
 # Decoders #
 ############
@@ -172,3 +214,30 @@ class FSDecoder(nn.Module):
         x, mask = self.unpool.forward_transpose(x, perm, n=n_points)
         x = self.conv(x) * mask[:, :1, :]
         return x
+
+
+class RNNDecoder(nn.Module):
+    def __init__(self, *, input_channels, output_channels, set_size, dim, **kwargs):
+        super().__init__()
+        self.output_channels = output_channels
+        self.set_size = set_size
+        self.dim = dim
+        self.lin = nn.Linear(input_channels, dim)
+        self.model = nn.LSTM(1, dim, 1)
+        self.out = nn.Conv1d(dim, output_channels, 1)
+
+    def forward(self, x, *args):
+        # use input feature vector as initial cell state for the LSTM
+        cell = x.view(x.size(0), -1)
+        cell = self.lin(cell)
+        # zero input of size set_size to get set_size number of outputs
+        dummy_input = torch.zeros(self.set_size, cell.size(0), 1, device=cell.device)
+        # initial hidden state of zeros
+        dummy_hidden = torch.zeros(1, cell.size(0), self.dim, device=cell.device)
+        # run the LSTM
+        cell = cell.unsqueeze(0)
+        output, _ = self.model(dummy_input, (dummy_hidden, cell))
+        # project into correct number of output dims
+        output = output.permute(1, 2, 0)
+        output = self.out(output)
+        return output

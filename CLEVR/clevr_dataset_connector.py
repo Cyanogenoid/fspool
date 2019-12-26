@@ -138,6 +138,10 @@ class ClevrDatasetStateDescription(Dataset):
         scene_idx = current_question['image_index']
         obj = self.objects[scene_idx]
         
+        # random permutation of objects for janossy pooling only
+        # all the other methods don't depend on the order
+        permutation = torch.randperm(obj.size(0))
+        obj = obj[permutation]
         
         question = utils.to_dictionary_indexes(self.dictionaries[0], current_question['question'])
         answer = utils.to_dictionary_indexes(self.dictionaries[1], current_question['answer'])

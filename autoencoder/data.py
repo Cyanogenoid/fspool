@@ -12,7 +12,7 @@ import torchvision.transforms.functional as T
 def collate(batch):
     points, labels, n_points = zip(*batch)
 
-    point_tensor = torch.zeros(len(points), 2, max(n_points))
+    point_tensor = torch.zeros(len(points), points[0].size(0), max(n_points))
     for i, (point, length) in enumerate(zip(points, n_points)):
         point_tensor[i, :, :length] = point
 
@@ -108,6 +108,14 @@ class MNISTSet(torch.utils.data.Dataset):
 
     def __len__(self):
         return len(self.data)
+
+
+class MNISTSetMasked(MNISTSet):
+    def __getitem__(self, item):
+        s, l, c = super().__getitem__(item)
+        ones = torch.ones(1, s.size(1), device=s.device)
+        s = torch.cat([s, ones], dim=0)
+        return s, l, c
 
 
 if __name__ == '__main__':
