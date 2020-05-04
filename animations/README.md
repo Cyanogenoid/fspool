@@ -1,6 +1,6 @@
 # Animations for ICLR 2020 video
 
-This directory contains the manim script to create the animations used in my ICLR 2020 video.
+This directory contains the manim script to create the animations used in my ICLR 2020 video, available here: https://iclr.cc/virtual_2020/poster_HJgBA2VYwH.html .
 I hope that this will be a useful resource for people who want to make animations for their own paper.
 
 ## Basic instructions
